@@ -8,6 +8,7 @@ const taskPriorityForm = document.getElementById("task-priority");
 const taskDueDateForm = document.getElementById("task-due-date");
 const taskDescriptionForm = document.getElementById("task-description");
 const charCount = document.getElementById("char-count");
+const todoTasksCount = document.getElementById("todo-tasks-count");
 const submitBtn = document.getElementById("submit-btn");
 const tasksTodo = document.getElementById("tasks-todo");
 const tasksInProgress = document.getElementById("tasks-in-progress");
@@ -60,7 +61,7 @@ if (modalOverlay) {
     });
 }
 submitBtn?.addEventListener("click", addTask);
-displayTasks(taskList);
+displayTodoTasks(taskList);
 function addTask() {
     let formValue = {
         id: `Task-${crypto.randomUUID()}`,
@@ -78,7 +79,7 @@ function addTask() {
     localStorage.setItem("tasks", JSON.stringify(taskList));
     closeModal();
     intiFormValues();
-    displayTasks(taskList);
+    displayTodoTasks(taskList);
     manageInterval();
 }
 function intiFormValues() {
@@ -87,18 +88,25 @@ function intiFormValues() {
     taskDueDateForm.value = "";
     taskDescriptionForm.value = "";
 }
-function displayTasks(tasksArray) {
-    if (tasksArray.length === 0) {
-        tasksTodo.innerHTML = `<div
+function displayEmptyMessage(listContainer) {
+    if (!listContainer)
+        return;
+    listContainer.innerHTML = `<div
               class="flex flex-col items-center justify-center py-12 text-slate-400"
               >
               <i class="fa-regular fa-folder-open text-4xl mb-3 opacity-50"></i>
               <p class="text-sm">No tasks yet</p>
               <p class="text-xs mt-1">Click + to add one</p>
             </div>`;
+}
+function displayTodoTasks(tasksArray) {
+    let todoTasks = tasksArray.filter((task) => task.status === "todo");
+    todoTasksCount.textContent = `${todoTasks.length} tasks`;
+    if (todoTasks.length === 0) {
+        displayEmptyMessage(tasksTodo);
         return;
     }
-    tasksTodo.innerHTML = tasksArray
+    tasksTodo.innerHTML = todoTasks
         .map((task, index) => {
         let taskIndex = index + 1;
         if (taskIndex > 10) {
@@ -170,7 +178,7 @@ function displayTasks(tasksArray) {
       </div>`;
     })
         .join("");
-    console.log("update");
+    // console.log("update");
 }
 function formatDate(date) {
     return new Date(date).toLocaleDateString("en-US", {
@@ -217,12 +225,10 @@ function manageInterval() {
 manageInterval();
 // main app update function
 function updateApp() {
-    displayTasks(taskList);
-    // updateTaskTimes();
-    // updateSomethingElse();
+    displayTodoTasks(taskList);
 }
 // update char count
-taskDescriptionForm.addEventListener("input", () => {
+taskDescriptionForm?.addEventListener("input", () => {
     updateTextAreaLength();
 });
 // update text area length

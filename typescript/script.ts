@@ -25,11 +25,11 @@ const taskDueDateForm = document.getElementById(
 const taskDescriptionForm = document.getElementById(
   "task-description",
 ) as HTMLTextAreaElement | null;
-
 const charCount = document.getElementById("char-count");
 
-const submitBtn: OwnHtmlEl = document.getElementById("submit-btn");
+const todoTasksCount: OwnHtmlEl = document.getElementById("todo-tasks-count");
 
+const submitBtn: OwnHtmlEl = document.getElementById("submit-btn");
 const tasksTodo: OwnHtmlEl = document.getElementById("tasks-todo");
 const tasksInProgress: OwnHtmlEl = document.getElementById("tasks-in-progress");
 const tasksCompleted: OwnHtmlEl = document.getElementById("tasks-completed");
@@ -87,7 +87,7 @@ if (modalOverlay) {
 
 submitBtn?.addEventListener("click", addTask);
 
-displayTasks(taskList);
+displayTodoTasks(taskList);
 
 function addTask(): void {
   let formValue: Task = {
@@ -111,7 +111,7 @@ function addTask(): void {
   closeModal();
   intiFormValues();
 
-  displayTasks(taskList);
+  displayTodoTasks(taskList);
   manageInterval();
 }
 
@@ -122,19 +122,28 @@ function intiFormValues() {
   taskDescriptionForm!.value = "";
 }
 
-function displayTasks(tasksArray: Task[]) {
-  if (tasksArray.length === 0) {
-    tasksTodo!.innerHTML = `<div
+function displayEmptyMessage(listContainer: OwnHtmlEl) {
+  if (!listContainer) return;
+  listContainer.innerHTML = `<div
               class="flex flex-col items-center justify-center py-12 text-slate-400"
               >
               <i class="fa-regular fa-folder-open text-4xl mb-3 opacity-50"></i>
               <p class="text-sm">No tasks yet</p>
               <p class="text-xs mt-1">Click + to add one</p>
             </div>`;
+}
+
+function displayTodoTasks(tasksArray: Task[]) {
+  let todoTasks = tasksArray.filter((task) => task.status === "todo");
+
+  todoTasksCount!.textContent = `${todoTasks.length} tasks`;
+
+  if (todoTasks.length === 0) {
+    displayEmptyMessage(tasksTodo);
     return;
   }
 
-  tasksTodo!.innerHTML = tasksArray
+  tasksTodo!.innerHTML = todoTasks
     .map((task, index) => {
       let taskIndex: string | number = index + 1;
       if (taskIndex > 10) {
@@ -206,7 +215,7 @@ function displayTasks(tasksArray: Task[]) {
       </div>`;
     })
     .join("");
-  console.log("update");
+  // console.log("update");
 }
 
 function formatDate(date: string): string {
@@ -267,13 +276,11 @@ manageInterval();
 
 // main app update function
 function updateApp(): void {
-  displayTasks(taskList);
-  // updateTaskTimes();
-  // updateSomethingElse();
+  displayTodoTasks(taskList);
 }
 
 // update char count
-taskDescriptionForm!.addEventListener("input", () => {
+taskDescriptionForm?.addEventListener("input", () => {
   updateTextAreaLength();
 });
 
