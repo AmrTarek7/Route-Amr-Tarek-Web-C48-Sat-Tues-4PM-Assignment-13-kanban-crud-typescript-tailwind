@@ -209,6 +209,34 @@ columnsContainer?.addEventListener("click", (e: MouseEvent) => {
   }
 });
 
+function showToast(message: string): void {
+  const toast = document.createElement("div");
+  toast.className =
+    "fixed z-50 bg-[#05b26b] text-white font-medium px-6 py-3.5 rounded-xl shadow-lg transition-all duration-300";
+  toast.style.top = "20px";
+  toast.style.right = "1%";
+  toast.style.transform = "translate(-50%, -20px)";
+  toast.style.opacity = "0";
+  toast.style.pointerEvents = "none";
+  toast.style.fontSize = "15px";
+
+  toast.innerHTML = `<span>${message}</span>`;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.transform = "translate(-50%, 0)";
+    toast.style.opacity = "1";
+  }, 50);
+
+  setTimeout(() => {
+    toast.style.transform = "translate(-50%, -20px)";
+    toast.style.opacity = "0";
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 3000);
+}
+
 displayTasks(taskList);
 
 function addTask(): void {
@@ -250,6 +278,7 @@ function addTask(): void {
 
   displayTasks(taskList);
   manageInterval();
+  showToast("Task added successfully!");
 }
 
 function saveTask(taskId: string): void {
@@ -288,6 +317,7 @@ function saveTask(taskId: string): void {
   intiFormValues();
 
   displayTasks(taskList);
+  showToast("Task updated successfully!");
 }
 
 function deleteTask(taskId: string): void {
@@ -295,6 +325,7 @@ function deleteTask(taskId: string): void {
   localStorage.setItem("tasks", JSON.stringify(taskList));
   displayTasks(taskList);
   manageInterval();
+  showToast("Task deleted successfully!");
 }
 
 function changeTaskStatus(taskId: string, newStatus: string): void {

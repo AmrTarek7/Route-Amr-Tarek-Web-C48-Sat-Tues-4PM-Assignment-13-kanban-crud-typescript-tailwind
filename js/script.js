@@ -172,6 +172,30 @@ columnsContainer?.addEventListener("click", (e) => {
         return;
     }
 });
+function showToast(message) {
+    const toast = document.createElement("div");
+    toast.className =
+        "fixed z-50 bg-[#05b26b] text-white font-medium px-6 py-3.5 rounded-xl shadow-lg transition-all duration-300";
+    toast.style.top = "20px";
+    toast.style.right = "1%";
+    toast.style.transform = "translate(-50%, -20px)";
+    toast.style.opacity = "0";
+    toast.style.pointerEvents = "none";
+    toast.style.fontSize = "15px";
+    toast.innerHTML = `<span>${message}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.style.transform = "translate(-50%, 0)";
+        toast.style.opacity = "1";
+    }, 50);
+    setTimeout(() => {
+        toast.style.transform = "translate(-50%, -20px)";
+        toast.style.opacity = "0";
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
 displayTasks(taskList);
 function addTask() {
     // Validate title is not empty
@@ -207,6 +231,7 @@ function addTask() {
     intiFormValues();
     displayTasks(taskList);
     manageInterval();
+    showToast("Task added successfully!");
 }
 function saveTask(taskId) {
     // Validate title is not empty
@@ -240,12 +265,14 @@ function saveTask(taskId) {
     closeModal();
     intiFormValues();
     displayTasks(taskList);
+    showToast("Task updated successfully!");
 }
 function deleteTask(taskId) {
     taskList = taskList.filter((task) => task.id !== taskId);
     localStorage.setItem("tasks", JSON.stringify(taskList));
     displayTasks(taskList);
     manageInterval();
+    showToast("Task deleted successfully!");
 }
 function changeTaskStatus(taskId, newStatus) {
     const task = taskList.find((t) => t.id === taskId);
