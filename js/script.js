@@ -172,10 +172,9 @@ columnsContainer?.addEventListener("click", (e) => {
         return;
     }
 });
-function showToast(message) {
+function showToast(message, color = "bg-[#05b26b]") {
     const toast = document.createElement("div");
-    toast.className =
-        "fixed z-50 bg-[#05b26b] text-white font-medium px-6 py-3.5 rounded-xl shadow-lg transition-all duration-300";
+    toast.className = `fixed z-50 ${color} text-white font-medium px-6 py-3.5 rounded-xl shadow-lg transition-all duration-300`;
     toast.style.top = "20px";
     toast.style.right = "1%";
     toast.style.transform = "translate(-50%, -20px)";
@@ -272,7 +271,7 @@ function deleteTask(taskId) {
     localStorage.setItem("tasks", JSON.stringify(taskList));
     displayTasks(taskList);
     manageInterval();
-    showToast("Task deleted successfully!");
+    showToast("Task deleted successfully!", "bg-red-600");
 }
 function changeTaskStatus(taskId, newStatus) {
     const task = taskList.find((t) => t.id === taskId);
